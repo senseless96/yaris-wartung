@@ -132,3 +132,21 @@ def test_reset_password(tmp_path, monkeypatch):
         auth.ensure_user(conn)
         h = conn.execute("SELECT password_hash FROM users").fetchone()[0]
     assert auth.verify_password("zweitesPW2", h)
+
+
+def test_second_user(client):
+    login(client)
+    r = client.post("/api/users", json={"username": "partnerin", "password": "zweitesPW1"})
+    assert r.status_code == 201
+    assert client.post("/api/users", json={"username": "partnerin", "password": "xxxxxxxx1"}).status_code == 400
+    users = client.get("/api/users").json()
+    assert [u["username"] for u in users] == ["yaris", "partnerin"]
+    me = next(u for u in users if u["is_me"])
+    assert client.delete(f"/api/users/{me['id']}").status_code == 400
+    # zweiter Benutzer sieht dieselben Daten
+    client.cookies.clear()
+    assert client.post("/api/auth/login", json={"username": "partnerin", "password": "zweitesPW1"}).status_code == 200
+    assert client.get("/api/dashboard").json()["odometer"]["km"] == 105000
+    # und kann den ersten nicht-sich-selbst löschen? -> erlaubt, aber nicht sich selbst
+    other = next(u for u in client.get("/api/users").json() if not u["is_me"])
+    assert client.delete(f"/api/users/{other['id']}").status_code == 200

@@ -7,7 +7,7 @@ import { ItemEditSheet } from "./Items";
 
 export default function Settings({ onLogout }: { onLogout: () => void }) {
   const { dash } = useData();
-  const [sheet, setSheet] = useState<null | "vehicle" | "warn" | "password" | "backup">(null);
+  const [sheet, setSheet] = useState<null | "vehicle" | "warn" | "password" | "backup" | "users">(null);
   const { data: items } = useResource<Item[]>("/items");
   const [editItem, setEditItem] = useState<Item | null>(null);
   const [newItem, setNewItem] = useState(false);
@@ -25,7 +25,8 @@ export default function Settings({ onLogout }: { onLogout: () => void }) {
         <MenuRow icon="home" title="Fahrzeugdaten" sub={dash?.vehicle ? `${dash.vehicle.name} · EZ ${dash.vehicle.first_registration.slice(0, 4)}` : ""} onClick={() => setSheet("vehicle")} />
         <MenuRow icon="history" title="Vorwarnung „bald fällig“" sub={dash ? `${dash.soon_months} Monate vor Fälligkeit` : ""} onClick={() => setSheet("warn")} />
         <MenuRow icon="download" title="Datensicherung" sub="Tägliches Backup, Wiederherstellung" onClick={() => setSheet("backup")} />
-        <MenuRow icon="settings" title="Benutzer & Passwort" sub="Zugangsdaten ändern" onClick={() => setSheet("password")} />
+        <MenuRow icon="settings" title="Mein Zugang" sub="Eigenen Namen und Passwort ändern" onClick={() => setSheet("password")} />
+        <MenuRow icon="plus" title="Benutzer" sub="Weitere Personen mit Zugriff" onClick={() => setSheet("users")} />
       </section>
 
       <div className="section-head">
@@ -54,6 +55,7 @@ export default function Settings({ onLogout }: { onLogout: () => void }) {
       <WarnSheet open={sheet === "warn"} onClose={() => setSheet(null)} />
       <PasswordSheet open={sheet === "password"} onClose={() => setSheet(null)} />
       <BackupSheet open={sheet === "backup"} onClose={() => setSheet(null)} />
+      <UsersSheet open={sheet === "users"} onClose={() => setSheet(null)} />
       <ItemEditSheet open={!!editItem || newItem} item={editItem} onClose={() => { setEditItem(null); setNewItem(false); }} />
     </div>
   );
@@ -152,14 +154,14 @@ function PasswordSheet({ open, onClose }: { open: boolean; onClose: () => void }
     if (f.nu !== f.nu2) return toast("Die Passwörter stimmen nicht überein.", "err");
     try {
       await api("/auth/password", { method: "POST", json: { old_password: f.old, new_password: f.nu, new_username: f.user } });
-      toast("Zugangsdaten geändert. Das andere Handy muss sich neu anmelden.");
+      toast("Zugangsdaten geändert. Andere Geräte mit diesem Zugang müssen sich neu anmelden.");
       onClose();
     } catch (e) {
       toast((e as Error).message, "err");
     }
   };
   return (
-    <Sheet open={open} onClose={onClose} title="Benutzer & Passwort" footer={<button className="btn btn-primary grow" onClick={save}>Ändern</button>}>
+    <Sheet open={open} onClose={onClose} title="Mein Zugang" footer={<button className="btn btn-primary grow" onClick={save}>Ändern</button>}>
       <Field label="Benutzername"><input value={f.user} autoCapitalize="none" onChange={(e) => setF({ ...f, user: e.target.value })} /></Field>
       <Field label="Bisheriges Passwort"><input type="password" autoComplete="current-password" value={f.old} onChange={(e) => setF({ ...f, old: e.target.value })} /></Field>
       <Field label="Neues Passwort" hint="mindestens 8 Zeichen"><input type="password" autoComplete="new-password" value={f.nu} onChange={(e) => setF({ ...f, nu: e.target.value })} /></Field>
@@ -248,6 +250,73 @@ function BackupSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
         ))}
         {list && !list.backups.length && <li className="muted">Noch keine Sicherung vorhanden.</li>}
       </ul>
+    </Sheet>
+  );
+}
+
+/* ---------------- Benutzer ---------------- */
+interface AppUser { id: number; username: string; created_at: string; is_me: boolean }
+
+function UsersSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const toast = useToast();
+  const [users, setUsers] = useState<AppUser[]>([]);
+  const [name, setName] = useState("");
+  const [pw, setPw] = useState("");
+  const load = () => api<AppUser[]>("/users").then(setUsers).catch((e) => toast(e.message, "err"));
+  useEffect(() => {
+    if (open) {
+      load();
+      setName("");
+      setPw("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const add = async () => {
+    if (name.trim().length < 2) return toast("Bitte einen Benutzernamen eingeben.", "err");
+    if (pw.length < 8) return toast("Das Passwort braucht mindestens 8 Zeichen.", "err");
+    try {
+      await api("/users", { method: "POST", json: { username: name.trim(), password: pw } });
+      toast(`Benutzer „${name.trim()}“ angelegt`);
+      setName("");
+      setPw("");
+      load();
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+  const remove = async (u: AppUser) => {
+    if (!confirmDialog(`Benutzer „${u.username}“ löschen? Die Wartungsdaten bleiben erhalten.`)) return;
+    try {
+      await api(`/users/${u.id}`, { method: "DELETE" });
+      toast("Benutzer gelöscht");
+      load();
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  return (
+    <Sheet open={open} onClose={onClose} title="Benutzer" footer={<button className="btn btn-primary grow" onClick={add}><Icon name="plus" size={18} /> Benutzer anlegen</button>}>
+      <p className="muted small">Alle Benutzer sehen und bearbeiten dieselben Daten. Jeder meldet sich mit eigenem Namen und Passwort an.</p>
+      <ul className="backup-list">
+        {users.map((u) => (
+          <li key={u.id}>
+            <div>
+              <b>{u.username}</b>
+              <span className="muted small">{u.is_me ? "Du (angemeldet)" : `seit ${u.created_at.slice(8, 10)}.${u.created_at.slice(5, 7)}.${u.created_at.slice(0, 4)}`}</span>
+            </div>
+            {!u.is_me && (
+              <button className="icon-btn subtle" onClick={() => remove(u)} aria-label="Löschen">
+                <Icon name="trash" size={18} />
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="section-label">Neuer Benutzer</div>
+      <Field label="Benutzername"><input value={name} autoCapitalize="none" autoComplete="off" onChange={(e) => setName(e.target.value)} /></Field>
+      <Field label="Passwort" hint="mindestens 8 Zeichen – kann der Benutzer später selbst ändern"><input type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} /></Field>
     </Sheet>
   );
 }

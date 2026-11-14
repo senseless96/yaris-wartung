@@ -49,6 +49,11 @@ class PasswordIn(BaseModel):
     new_username: Optional[str] = None
 
 
+class UserIn(BaseModel):
+    username: str = Field(min_length=2, max_length=40)
+    password: str = Field(min_length=8)
+
+
 class OdometerIn(BaseModel):
     date: date
     km: int = Field(ge=0, le=2_000_000)
@@ -170,9 +175,36 @@ def change_password(body: PasswordIn, response: Response, user=Depends(current_u
         raise HTTPException(400, "Das bisherige Passwort ist falsch.")
     new_hash = hash_password(body.new_password)
     username = (body.new_username or user["username"]).strip()
+    if conn.execute("SELECT 1 FROM users WHERE username = ? AND id != ?", (username, user["id"])).fetchone():
+        raise HTTPException(400, "Diesen Benutzernamen gibt es schon.")
     conn.execute("UPDATE users SET password_hash = ?, username = ? WHERE id = ?", (new_hash, username, user["id"]))
     set_cookie(response, make_token(user["id"], new_hash))
     return {"ok": True, "username": username}
+
+
+# ---- Benutzerverwaltung (alle Benutzer sehen dieselben Daten)
+
+@auth_api.get("/users")
+def list_users(user=Depends(current_user), conn: sqlite3.Connection = Depends(get_db)):
+    rows = conn.execute("SELECT id, username, created_at FROM users ORDER BY id").fetchall()
+    return [dict(r) | {"is_me": r["id"] == user["id"]} for r in rows]
+
+
+@auth_api.post("/users", status_code=201)
+def add_user(body: UserIn, conn: sqlite3.Connection = Depends(get_db)):
+    name = body.username.strip()
+    if conn.execute("SELECT 1 FROM users WHERE username = ?", (name,)).fetchone():
+        raise HTTPException(400, "Diesen Benutzernamen gibt es schon.")
+    cur = conn.execute("INSERT INTO users(username, password_hash) VALUES (?, ?)", (name, hash_password(body.password)))
+    return {"id": cur.lastrowid}
+
+
+@auth_api.delete("/users/{uid}")
+def delete_user(uid: int, user=Depends(current_user), conn: sqlite3.Connection = Depends(get_db)):
+    if uid == user["id"]:
+        raise HTTPException(400, "Du kannst dich nicht selbst löschen.")
+    conn.execute("DELETE FROM users WHERE id = ?", (uid,))
+    return {"ok": True}
 
 
 @auth_api.get("/version")
