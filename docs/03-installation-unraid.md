@@ -30,7 +30,7 @@ Unraid lädt die App als fertiges Image aus der GitHub Container Registry. Das I
 4. Auf GitHub: **Profil → Packages → yaris-wartung → Package settings → Change visibility → Public**.
    Der Code enthält keine Passwörter oder Daten. Deine Daten liegen ausschließlich auf Unraid.
 
-Das Image heißt danach `ghcr.io/DEIN-GITHUB-NAME/yaris-wartung:latest`.
+Das Image heißt danach `ghcr.io/senseless96/yaris-wartung:latest`.
 
 ## 2. Container auf Unraid anlegen
 
@@ -39,7 +39,7 @@ Das Image heißt danach `ghcr.io/DEIN-GITHUB-NAME/yaris-wartung:latest`.
 | Feld | Wert |
 |---|---|
 | Name | `yaris-wartung` |
-| Repository | `ghcr.io/DEIN-GITHUB-NAME/yaris-wartung:latest` |
+| Repository | `ghcr.io/senseless96/yaris-wartung:latest` |
 | Network Type | `Bridge` |
 | WebUI | `http://[IP]:[PORT:8080]/` |
 

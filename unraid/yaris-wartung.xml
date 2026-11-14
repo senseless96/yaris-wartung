@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>yaris-wartung</Name>
-  <Repository>ghcr.io/GITHUB-NAME/yaris-wartung:latest</Repository>
-  <Registry>https://github.com/GITHUB-NAME/yaris-wartung/pkgs/container/yaris-wartung</Registry>
+  <Repository>ghcr.io/senseless96/yaris-wartung:latest</Repository>
+  <Registry>https://github.com/senseless96/yaris-wartung/pkgs/container/yaris-wartung</Registry>
   <Network>bridge</Network>
   <Privileged>false</Privileged>
   <Overview>Persönliche Wartungs-App für den Toyota Yaris Hybrid (PWA). Daten liegen in /data (SQLite) mit täglichem Backup.</Overview>
   <Category>Tools:</Category>
   <WebUI>http://[IP]:[PORT:8080]/</WebUI>
-  <Icon>https://raw.githubusercontent.com/GITHUB-NAME/yaris-wartung/main/frontend/public/icon-512.png</Icon>
+  <Icon>https://raw.githubusercontent.com/senseless96/yaris-wartung/main/frontend/public/icon-512.png</Icon>
   <Config Name="WebUI-Port" Target="8080" Default="8085" Mode="tcp" Description="Port der App im Heimnetz" Type="Port" Display="always" Required="true">8085</Config>
   <Config Name="Daten" Target="/data" Default="/mnt/user/appdata/yaris-wartung" Mode="rw" Description="Datenbank, Schlüssel und Backups" Type="Path" Display="always" Required="true">/mnt/user/appdata/yaris-wartung</Config>
   <Config Name="Benutzername" Target="APP_USER" Default="yaris" Description="Login-Name (nur beim allerersten Start verwendet)" Type="Variable" Display="always" Required="true">yaris</Config>
