@@ -1,0 +1,40 @@
+{
+  "_quelle": "Toyota_Yaris_Hybrid_2018_Wartungsplan.xlsx (Blatt 'Inspektion') + freigegebene Änderungen vom 14.11.2026. Jahr ohne Datum -> 01.01. (Excel-genau).",
+  "vehicle": {
+    "name": "Toyota Yaris Hybrid",
+    "model_code": "XP13 / NHP130",
+    "engine": "1NZ-FXE",
+    "transmission": "Hybrid-Automatik",
+    "first_registration": "2018-01-01",
+    "first_registration_exact": 0
+  },
+  "settings": {
+    "soon_months": "3",
+    "inspection_base_km": "15000"
+  },
+  "odometer_readings": [
+    { "date": "2024-01-01", "km": 62373, "source": "import", "note": "Excel: Luftfilterwechsel 2024" },
+    { "date": "2025-01-01", "km": 81967, "source": "import", "note": "Excel: letzte Inspektion 2025" },
+    { "date": "2026-11-14", "km": 105000, "source": "import", "note": "Excel: Kilometerstand (bestätigt)" }
+  ],
+  "maintenance_items": [
+    { "key": "inspektion",  "name": "Toyota-Inspektion (Umfang prüfen)",   "kind": "check",   "interval_km": 15000, "interval_months": 12, "plan_mode": "every_inspection", "part_of_inspection": 1 },
+    { "key": "oel",         "name": "Motoröl wechseln",                    "kind": "replace", "interval_km": 15000, "interval_months": 12, "plan_mode": "every_inspection", "part_of_inspection": 1 },
+    { "key": "oelfilter",   "name": "Ölfilter ersetzen",                   "kind": "replace", "interval_km": 15000, "interval_months": 12, "plan_mode": "every_inspection", "part_of_inspection": 1 },
+    { "key": "dichtung",    "name": "Dichtung Ölablassschraube",           "kind": "replace", "interval_km": 15000, "interval_months": 12, "plan_mode": "every_inspection", "part_of_inspection": 1 },
+    { "key": "bremsfl",     "name": "Bremsflüssigkeit wechseln",           "kind": "replace", "interval_km": 30000, "interval_months": 24, "plan_mode": "plan_step", "note": "Toyota-Plan: Stufen 2, 4, 6, 8" },
+    { "key": "innenraum",   "name": "Innenraumfilter ersetzen",            "kind": "replace", "interval_km": 15000, "interval_months": 12, "plan_mode": "every_inspection", "part_of_inspection": 1, "note": "Geändert von 30.000 km / 2 Jahre: wird bei jeder Inspektion gewechselt" },
+    { "key": "luftfilter",  "name": "Motor-Luftfilter ersetzen",           "kind": "replace", "interval_km": 60000, "interval_months": 48, "plan_mode": "plan_step", "note": "Toyota-Plan: Stufen 4, 8" },
+    { "key": "zuendkerzen", "name": "Zündkerzen ersetzen",                 "kind": "replace", "interval_km": 90000, "interval_months": 72, "plan_mode": "plan_step", "note": "Toyota-Plan: Stufe 6" },
+    { "key": "hybrid",      "name": "Hybridbatterie prüfen lassen",        "kind": "check",   "interval_km": 15000, "interval_months": 12, "plan_mode": "every_inspection", "part_of_inspection": 1, "note": "Jährlicher Check – Voraussetzung für die verlängerte Hybridbatterie-Garantie" },
+    { "key": "kuehlmittel", "name": "Kühlmittel wechseln (Motor + Inverter)", "kind": "replace", "interval_km": 80000, "interval_months": 60, "first_interval_km": 160000, "first_interval_months": 120, "plan_mode": "plan_step", "note": "Toyota Super Long Life Coolant: erstmals 160.000 km / 10 Jahre ab Erstzulassung, danach alle 80.000 km / 5 Jahre" },
+    { "key": "hu",          "name": "HU/AU (TÜV)",                         "kind": "check",   "interval_km": null,  "interval_months": 24, "plan_mode": null, "note": "Gesetzliche Hauptuntersuchung alle 24 Monate – Datum der letzten HU nachtragen" },
+    { "key": "pruef_bremsen",  "name": "Bremsen / Reifen / Licht prüfen",     "kind": "inspection_check", "interval_km": null, "interval_months": null, "plan_mode": "every_inspection", "part_of_inspection": 1, "note": "Bei jeder Inspektion prüfen" },
+    { "key": "pruef_kuehl",    "name": "Kühlmittel / Undichtigkeiten prüfen", "kind": "inspection_check", "interval_km": null, "interval_months": null, "plan_mode": "every_inspection", "part_of_inspection": 1, "note": "Bei jeder Inspektion prüfen" },
+    { "key": "getriebeoel", "name": "Getriebeöl: Vorgabe prüfen",          "kind": "info",    "interval_km": null, "interval_months": null, "plan_mode": null, "note": "Hybridgetriebe: kein fester Wechsel vorgesehen – FIN / Serviceheft prüfen" }
+  ],
+  "service_events": [
+    { "date": "2024-01-01", "date_exact": 0, "km": 62373, "note": "Import aus Excel (nur Jahr bekannt)", "items": ["luftfilter"] },
+    { "date": "2025-01-01", "date_exact": 0, "km": 81967, "note": "Import aus Excel – letzte Inspektion (nur Jahr bekannt)", "items": ["inspektion", "oel", "oelfilter", "dichtung", "bremsfl", "innenraum", "zuendkerzen", "hybrid", "pruef_bremsen", "pruef_kuehl"] }
+  ]
+}

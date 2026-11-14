@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>yaris-wartung</Name>
+  <Repository>ghcr.io/GITHUB-NAME/yaris-wartung:latest</Repository>
+  <Registry>https://github.com/GITHUB-NAME/yaris-wartung/pkgs/container/yaris-wartung</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Overview>Persönliche Wartungs-App für den Toyota Yaris Hybrid (PWA). Daten liegen in /data (SQLite) mit täglichem Backup.</Overview>
+  <Category>Tools:</Category>
+  <WebUI>http://[IP]:[PORT:8080]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/GITHUB-NAME/yaris-wartung/main/frontend/public/icon-512.png</Icon>
+  <Config Name="WebUI-Port" Target="8080" Default="8085" Mode="tcp" Description="Port der App im Heimnetz" Type="Port" Display="always" Required="true">8085</Config>
+  <Config Name="Daten" Target="/data" Default="/mnt/user/appdata/yaris-wartung" Mode="rw" Description="Datenbank, Schlüssel und Backups" Type="Path" Display="always" Required="true">/mnt/user/appdata/yaris-wartung</Config>
+  <Config Name="Benutzername" Target="APP_USER" Default="yaris" Description="Login-Name (nur beim allerersten Start verwendet)" Type="Variable" Display="always" Required="true">yaris</Config>
+  <Config Name="Passwort" Target="APP_PASSWORD" Default="" Description="Start-Passwort (nur beim allerersten Start verwendet, danach in der App ändern)" Type="Variable" Display="always" Required="true" Mask="true"></Config>
+  <Config Name="Nur HTTPS-Cookies" Target="COOKIE_SECURE" Default="true" Description="true = Anmeldung nur über HTTPS (Proxy Manager). false = Test im Heimnetz über http://" Type="Variable" Display="advanced" Required="false">true</Config>
+  <Config Name="Backup-Uhrzeit" Target="BACKUP_HOUR" Default="3" Description="Stunde für das tägliche Backup (0-23)" Type="Variable" Display="advanced" Required="false">3</Config>
+  <Config Name="Backups behalten" Target="BACKUP_KEEP" Default="30" Description="Anzahl automatischer Backups" Type="Variable" Display="advanced" Required="false">30</Config>
+  <Config Name="Passwort zurücksetzen" Target="RESET_PASSWORD" Default="false" Description="true = Login beim Start auf APP_USER/APP_PASSWORD zurücksetzen (danach wieder false)" Type="Variable" Display="advanced" Required="false">false</Config>
+  <Config Name="Zeitzone" Target="TZ" Default="Europe/Berlin" Type="Variable" Display="advanced" Required="false">Europe/Berlin</Config>
+</Container>

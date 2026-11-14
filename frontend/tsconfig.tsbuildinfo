@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/api.ts","./src/format.ts","./src/main.tsx","./src/store.tsx","./src/ui.tsx","./src/components/ItemCard.tsx","./src/components/forms.tsx","./src/pages/Dashboard.tsx","./src/pages/History.tsx","./src/pages/Items.tsx","./src/pages/Login.tsx","./src/pages/Odometer.tsx","./src/pages/Settings.tsx"],"version":"5.6.3"}
