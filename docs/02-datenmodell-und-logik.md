@@ -34,8 +34,8 @@ maintenance_records   welche Positionen bei einem Termin erledigt wurden (= Hist
 letzte = jüngster maintenance_record der Position (nach Datum, dann km)
 
 wenn kind == "info"                 → Status "info"           (grau, z. B. Getriebeöl)
-wenn kind == "inspection_check"     → übernimmt Status der Inspektion
-wenn keine letzte Durchführung       → "Historie prüfen"         (Excel: H = "Historie prüfen")
+wenn kind == "inspection_check"     → Status "info" (wird mit der Inspektion abgehakt, zählt nicht extra)
+wenn keine letzte Durchführung       → "missing" = Ohne Daten (grau); Ausnahme Erstintervall ab Erstzulassung
 
 faellig_km    = letzte.km    + interval_km        (falls interval_km gesetzt)
 faellig_datum = letzte.datum + interval_months    (falls interval_months gesetzt)
